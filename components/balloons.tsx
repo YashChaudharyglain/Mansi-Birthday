@@ -1,29 +1,42 @@
 "use client"
 
 import type React from "react"
+import { useEffect, useMemo, useState } from "react"
 
 export default function Balloons() {
   // CHANGE: Enhanced premium balloon design with luxury colors
-  const balloons = Array.from({ length: 12 }).map((_, i) => ({
-    id: i,
-    left: `${(i * 100) / 12}%`,
-    delay: i * 0.15,
-    duration: 12 + Math.random() * 6,
-    color: [
-      "#FBB040", // Gold
-      "#F59E0B", // Amber
-      "#D97706", // Orange
-      "#DC2626", // Red
-      "#EF4444", // Light Red
-      "#FBBF24", // Light Gold
-      "#F97316", // Deep Orange
-      "#92400E", // Deep Brown
-      "#B45309", // Warm Brown
-      "#EA580C", // Vibrant Orange
-      "#D1410C", // Deep Red Orange
-      "#FB8500", // Rich Orange
-    ][i],
-  }))
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  const balloons = useMemo(() => {
+    if (!mounted) return [] as Array<{
+      id: number
+      left: string
+      delay: number
+      duration: number
+      color: string
+    }>
+    return Array.from({ length: 12 }).map((_, i) => ({
+      id: i,
+      left: `${(i * 100) / 12}%`,
+      delay: i * 0.15,
+      duration: 12 + Math.random() * 6,
+      color: [
+        "#FBB040", // Gold
+        "#F59E0B", // Amber
+        "#D97706", // Orange
+        "#DC2626", // Red
+        "#EF4444", // Light Red
+        "#FBBF24", // Light Gold
+        "#F97316", // Deep Orange
+        "#92400E", // Deep Brown
+        "#B45309", // Warm Brown
+        "#EA580C", // Vibrant Orange
+        "#D1410C", // Deep Red Orange
+        "#FB8500", // Rich Orange
+      ][i],
+    }))
+  }, [mounted])
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-5">

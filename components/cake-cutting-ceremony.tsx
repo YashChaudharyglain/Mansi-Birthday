@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 interface CakeCuttingCeremonyProps {
   onCeremonyComplete: (stage: number) => void
@@ -22,89 +22,113 @@ export default function CakeCuttingCeremony({ onCeremonyComplete, onEvents }: Ca
   const [showSong, setShowSong] = useState(false)
   const [showFlash, setShowFlash] = useState(false)
 
+  // Keep stable refs to callbacks so effect doesn't restart when parents re-render
+  const onEventsRef = useRef(onEvents)
+  const onCeremonyCompleteRef = useRef(onCeremonyComplete)
   useEffect(() => {
-    if (ceremonyStage === 1) {
-      // Step 1: Table appears
-      setTableVisible(true)
-      setCurrentStep(0)
-      onEvents(["table-ready"]) 
+    onEventsRef.current = onEvents
+  }, [onEvents])
+  useEffect(() => {
+    onCeremonyCompleteRef.current = onCeremonyComplete
+  }, [onCeremonyComplete])
 
-      // Step 2: Cake arrives on table
-      setTimeout(() => {
-        setCakeArrived(true)
-        setCurrentStep(1)
-        onEvents(["cake-arrived"]) 
-      }, 600)
-
-      // Step 3: Birthday song visual
-      setTimeout(() => {
-        setShowSong(true)
-        setCurrentStep(2)
-        onEvents(["song-start"]) 
-      }, 1000)
-
-      // Step 4: Knife arc enters
-      setTimeout(() => {
-        setKnifeActive(true)
-        setCurrentStep(3)
-        onEvents(["knife-enter"]) 
-      }, 2400)
-
-      // Step 5: Cake splits
-      setTimeout(() => {
-        setCakeSplit(true)
-        setCurrentStep(4)
-        onEvents(["knife-cutting", "cake-split"]) 
-      }, 3100)
-
-      // Hide song visual after the cut starts
-      setTimeout(() => {
-        setShowSong(false)
-      }, 3200)
-
-      // Step 6: Sparks and fun text
-      setTimeout(() => {
-        setShowSparks(true)
-        setShowFunnyText(true)
-        setCurrentStep(5)
-        onEvents(["funny-text"]) 
-      }, 3600)
-
-      // Step 7: Plates appear
-      setTimeout(() => {
-        setShowPlates(true)
-        setCurrentStep(6)
-        onEvents(["plating-started"]) 
-      }, 4300)
-
-      // Step 8: Serve slices
-      setTimeout(() => {
-        setCakeServed([true, false, false])
-        onEvents(["cake-served-1"]) 
-      }, 5100)
-
-      setTimeout(() => {
-        setCakeServed([true, true, false])
-        onEvents(["cake-served-2"]) 
-      }, 5700)
-
-      setTimeout(() => {
-        setCakeServed([true, true, true])
-        setCurrentStep(7)
-        onEvents(["cake-served-3", "serve-complete"]) 
-      }, 6300)
-
-      // Step 9: Final celebration + photo flash
-      setTimeout(() => {
-        setShowCelebration(true)
-        setCurrentStep(8)
-        setShowFlash(true)
-        onEvents(["celebration-start", "photo-flash", "ceremony-complete"]) 
-        onCeremonyComplete(2)
-        setTimeout(() => setShowFlash(false), 900)
-      }, 7000)
+  // Ensure the sequence is scheduled only once per start and properly cleaned up
+  const startedRef = useRef(false)
+  useEffect(() => {
+    if (ceremonyStage !== 1) {
+      // reset guard when leaving the stage
+      startedRef.current = false
+      return
     }
-  }, [ceremonyStage, onCeremonyComplete, onEvents])
+    if (startedRef.current) return
+    startedRef.current = true
+
+    const timers: number[] = []
+
+    // Step 1: Table appears
+    setTableVisible(true)
+    setCurrentStep(0)
+    onEventsRef.current(["table-ready"]) 
+
+    // Step 2: Cake arrives on table
+    timers.push(window.setTimeout(() => {
+      setCakeArrived(true)
+      setCurrentStep(1)
+      onEventsRef.current(["cake-arrived"]) 
+    }, 600))
+
+    // Step 3: Birthday song visual
+    timers.push(window.setTimeout(() => {
+      setShowSong(true)
+      setCurrentStep(2)
+      onEventsRef.current(["song-start"]) 
+    }, 1000))
+
+    // Step 4: Knife arc enters
+    timers.push(window.setTimeout(() => {
+      setKnifeActive(true)
+      setCurrentStep(3)
+      onEventsRef.current(["knife-enter"]) 
+    }, 2400))
+
+    // Step 5: Cake splits
+    timers.push(window.setTimeout(() => {
+      setCakeSplit(true)
+      setCurrentStep(4)
+      onEventsRef.current(["knife-cutting", "cake-split"]) 
+    }, 3100))
+
+    // Hide song visual after the cut starts
+    timers.push(window.setTimeout(() => {
+      setShowSong(false)
+    }, 3200))
+
+    // Step 6: Sparks and fun text
+    timers.push(window.setTimeout(() => {
+      setShowSparks(true)
+      setShowFunnyText(true)
+      setCurrentStep(5)
+      onEventsRef.current(["funny-text"]) 
+    }, 3600))
+
+    // Step 7: Plates appear
+    timers.push(window.setTimeout(() => {
+      setShowPlates(true)
+      setCurrentStep(6)
+      onEventsRef.current(["plating-started"]) 
+    }, 4300))
+
+    // Step 8: Serve slices
+    timers.push(window.setTimeout(() => {
+      setCakeServed([true, false, false])
+      onEventsRef.current(["cake-served-1"]) 
+    }, 5100))
+
+    timers.push(window.setTimeout(() => {
+      setCakeServed([true, true, false])
+      onEventsRef.current(["cake-served-2"]) 
+    }, 5700))
+
+    timers.push(window.setTimeout(() => {
+      setCakeServed([true, true, true])
+      setCurrentStep(7)
+      onEventsRef.current(["cake-served-3", "serve-complete"]) 
+    }, 6300))
+
+    // Step 9: Final celebration + photo flash
+    timers.push(window.setTimeout(() => {
+      setShowCelebration(true)
+      setCurrentStep(8)
+      setShowFlash(true)
+      onEventsRef.current(["celebration-start", "photo-flash", "ceremony-complete"]) 
+      onCeremonyCompleteRef.current(2)
+      timers.push(window.setTimeout(() => setShowFlash(false), 900))
+    }, 7000))
+
+    return () => {
+      timers.forEach((t) => clearTimeout(t))
+    }
+  }, [ceremonyStage])
 
   const steps = [
     "Table Ready",

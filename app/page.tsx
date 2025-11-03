@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import Confetti from "@/components/confetti"
-import Balloons from "@/components/balloons"
+import dynamic from "next/dynamic"
+const Confetti = dynamic(() => import("@/components/confetti"), { ssr: false })
+const Balloons = dynamic(() => import("@/components/balloons"), { ssr: false })
 import PremiumCake from "@/components/premium-cake"
-import HeartFloating from "@/components/heart-floating"
+const HeartFloating = dynamic(() => import("@/components/heart-floating"), { ssr: false })
 import PremiumMessage from "@/components/premium-message"
 import EventSequence from "@/components/event-sequence"
 import CakeCuttingCeremony from "@/components/cake-cutting-ceremony"
