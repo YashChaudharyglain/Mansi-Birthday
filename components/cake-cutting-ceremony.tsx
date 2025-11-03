@@ -5,9 +5,10 @@ import { useState, useEffect, useRef } from "react"
 interface CakeCuttingCeremonyProps {
   onCeremonyComplete: (stage: number) => void
   onEvents: (events: string[]) => void
+  autoStart?: boolean
 }
 
-export default function CakeCuttingCeremony({ onCeremonyComplete, onEvents }: CakeCuttingCeremonyProps) {
+export default function CakeCuttingCeremony({ onCeremonyComplete, onEvents, autoStart = false }: CakeCuttingCeremonyProps) {
   const [ceremonyStage, setCeremonyStage] = useState(0)
   const [showFunnyText, setShowFunnyText] = useState(false)
   const [showPlates, setShowPlates] = useState(false)
@@ -31,6 +32,13 @@ export default function CakeCuttingCeremony({ onCeremonyComplete, onEvents }: Ca
   useEffect(() => {
     onCeremonyCompleteRef.current = onCeremonyComplete
   }, [onCeremonyComplete])
+
+  // Auto start ceremony if requested
+  useEffect(() => {
+    if (autoStart && ceremonyStage === 0) {
+      setCeremonyStage(1)
+    }
+  }, [autoStart, ceremonyStage])
 
   // Ensure the sequence is scheduled only once per start and properly cleaned up
   const startedRef = useRef(false)
@@ -130,17 +138,7 @@ export default function CakeCuttingCeremony({ onCeremonyComplete, onEvents }: Ca
     }
   }, [ceremonyStage])
 
-  const steps = [
-    "Table Ready",
-    "Cake Arrives",
-    "Birthday Song",
-    "Knife Enters",
-    "Cutting",
-    "Spark & Fun",
-    "Plating",
-    "Serving",
-    "Celebrate",
-  ]
+  
 
   return (
     <div className="relative w-full">
@@ -153,17 +151,7 @@ export default function CakeCuttingCeremony({ onCeremonyComplete, onEvents }: Ca
         }}
       />
 
-      {/* Steps tracker */}
-      <div className="w-full max-w-3xl mx-auto mt-2 px-4">
-        <div className="grid grid-cols-8 gap-2">
-          {steps.map((label, i) => (
-            <div key={label} className={`text-center text-[10px] md:text-xs font-semibold transition-colors ${i <= currentStep ? "text-amber-700" : "text-amber-400/60"}`}>
-              <div className={`h-1 rounded-full mb-1 ${i <= currentStep ? "bg-gradient-to-r from-amber-400 to-orange-500" : "bg-amber-200"}`} />
-              {label}
-            </div>
-          ))}
-        </div>
-      </div>
+      
 
       {/* Main Cake Display */}
       <div className="flex flex-col items-center gap-8 py-12">
@@ -296,8 +284,8 @@ export default function CakeCuttingCeremony({ onCeremonyComplete, onEvents }: Ca
           <div className="pointer-events-none fixed inset-0 bg-white/90 animate-camera-flash z-30" />
         )}
 
-        {/* Start Button */}
-        {ceremonyStage === 0 && (
+        {/* Start Button (hidden when autoStart) */}
+        {!autoStart && ceremonyStage === 0 && (
           <button
             onClick={() => setCeremonyStage(1)}
             className="px-8 py-4 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white font-bold rounded-full text-xl hover:shadow-2xl transform hover:scale-110 transition-all duration-300 animate-pulse-glow shadow-lg mt-8"

@@ -18,7 +18,7 @@ export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false)
   const [showCutAnimation, setShowCutAnimation] = useState(false)
   const [events, setEvents] = useState<string[]>([])
-  const [showGirlPrompt, setShowGirlPrompt] = useState(true)
+  const [showGirlPrompt, setShowGirlPrompt] = useState(false)
   const [selfiePrompt, setSelfiePrompt] = useState(false)
   const [selfieOpen, setSelfieOpen] = useState(false)
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null)
@@ -73,18 +73,19 @@ export default function Home() {
     setTimeout(() => {
       setEvents((prev) => [...prev, "candle-blown"])
     }, 500)
-    // After blow, open ceremony start prompt directly
+    // After blow, show pre-cut note once in center
     setTimeout(() => {
-      setCeremonyIntroPrompt(true)
+      setPreCutNote(true)
     }, 800)
   }
 
   const handleCeremonyEvents = (ceremonyEvents: string[]) => {
     setEvents((prev) => [...prev, ...ceremonyEvents])
-    // Instant transition to selfie when serving completes
+    // When serving completes, prompt for selfie
     if (ceremonyEvents.includes("serve-complete") && !selfieDone) {
       setStage(2)
       setSelfiePrompt(true)
+      setSelfieOpen(false)
       setShowSpecialMessage(false)
     }
   }
@@ -98,6 +99,28 @@ export default function Home() {
     setShowConfetti(false)
     setTimeout(() => setShowConfetti(true), 100)
     setEvents((prev) => [...prev, "special-wish"])
+  }
+
+  // Reset back to the initial step (blow the candles)
+  const resetExperience = () => {
+    setStage(0)
+    setShowConfetti(false)
+    setShowCutAnimation(false)
+    setEvents([])
+    setShowGirlPrompt(false)
+    setSelfiePrompt(false)
+    setSelfieOpen(false)
+    setCapturedPhoto(null)
+    setSelfieDone(false)
+    setShowFlirt1(false)
+    setCeremonyIntroPrompt(false)
+    setPreCutNote(false)
+    setShowSpecialMessage(false)
+    setShowThanks(false)
+    setExperienceClosed(false)
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    } catch {}
   }
 
   const handleOpenCamera = () => {
@@ -170,8 +193,8 @@ export default function Home() {
         )}
 
         {/* CHANGE: Cake cutting ceremony section */}
-        {stage === 1 && (
-          <CakeCuttingCeremony onCeremonyComplete={handleCeremonyComplete} onEvents={handleCeremonyEvents} />
+        {stage === 1 && !preCutNote && (
+          <CakeCuttingCeremony autoStart onCeremonyComplete={handleCeremonyComplete} onEvents={handleCeremonyEvents} />
         )}
 
         {/* Original cake if not in ceremony mode */}
@@ -195,20 +218,7 @@ export default function Home() {
       </div>
 
       {/* Girl prompt to blow candles (English) */}
-      {stage === 0 && showGirlPrompt && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 bg-white/90 border border-amber-200 rounded-full shadow-xl px-4 py-3 flex items-center gap-3 animate-pop-in">
-          <span className="text-2xl">👧🏻</span>
-          <span className="text-sm md:text-base font-semibold text-amber-800">Please blow out the candles to make a wish!</span>
-          <button
-            onClick={() => {
-              setShowGirlPrompt(false)
-            }}
-            className="text-xs text-amber-700 hover:underline"
-          >
-            okay
-          </button>
-        </div>
-      )}
+      {false && showGirlPrompt && (<div />)}
 
       {/* Party button removed per new sequence */}
 
@@ -264,18 +274,22 @@ export default function Home() {
 
       {/* Pre-cut messages and guidance */}
       {preCutNote && stage === 1 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-white/90 border border-amber-200 rounded-2xl shadow-xl px-5 py-4 text-center space-y-2 animate-pop-in">
-          <p className="font-bold text-amber-800">Let's cut it, Mansi — because it's your birthday!</p>
-          <button
-            onClick={() => {
-              setPreCutNote(false)
-              // Ceremony component shows its own Start button; user will click it next
-            }}
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold shadow-md hover:shadow-lg"
-          >
-            Got it
-          </button>
-          <p className="text-sm text-amber-700">Ohh sorry, sorry — belated birthday! Tap the Start button to begin the cut.</p>
+        <div className="fixed inset-0 z-40 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60" />
+          <div className="relative z-10 w-[92vw] max-w-md rounded-2xl bg-white shadow-2xl border border-amber-200 overflow-hidden animate-pop-in">
+            <div className="p-6 text-center space-y-3">
+              <p className="font-bold text-amber-800">Let's cut it, Mansi — because it's your birthday!</p>
+              <button
+                onClick={() => {
+                  setPreCutNote(false)
+                }}
+                className="px-5 py-2 rounded-full bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold shadow-md hover:shadow-lg"
+              >
+                Got it
+              </button>
+              <p className="text-sm text-amber-700">Ohh sorry, sorry — belated birthday! Tap the Start button to begin the cut.</p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -291,10 +305,10 @@ export default function Home() {
               </h3>
               <p className="text-amber-800 font-semibold">Wishing you joy, love and endless smiles. 💖</p>
               <button
-                onClick={() => setExperienceClosed(true)}
+                onClick={resetExperience}
                 className="mt-2 px-8 py-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold shadow-md hover:shadow-lg transform hover:scale-105 transition"
               >
-                Close
+                OK
               </button>
             </div>
           </div>
