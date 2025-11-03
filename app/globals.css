@@ -1,0 +1,572 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* CHANGE: Premium luxury color scheme with deep golds, jewel tones, and elegant neutrals */
+  --background: oklch(0.97 0.01 280);
+  --foreground: oklch(0.15 0.01 280);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.01 280);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.01 280);
+  --primary: oklch(0.68 0.25 45);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.72 0.22 280);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.88 0.04 280);
+  --muted-foreground: oklch(0.45 0.02 280);
+  --accent: oklch(0.7 0.24 350);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.02 280);
+  --input: oklch(0.96 0.01 280);
+  --ring: oklch(0.68 0.25 45);
+  --chart-1: oklch(0.68 0.25 45);
+  --chart-2: oklch(0.72 0.22 280);
+  --chart-3: oklch(0.7 0.24 350);
+  --chart-4: oklch(0.65 0.22 200);
+  --chart-5: oklch(0.72 0.18 100);
+  --radius: 0.625rem;
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.15 0.01 280);
+  --sidebar-primary: oklch(0.68 0.25 45);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.72 0.22 280);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.92 0.02 280);
+  --sidebar-ring: oklch(0.68 0.25 45);
+}
+
+.dark {
+  --background: oklch(0.12 0.01 280);
+  --foreground: oklch(0.96 0.01 280);
+  --card: oklch(0.18 0.02 280);
+  --card-foreground: oklch(0.96 0.01 280);
+  --popover: oklch(0.18 0.02 280);
+  --popover-foreground: oklch(0.96 0.01 280);
+  --primary: oklch(0.75 0.28 45);
+  --primary-foreground: oklch(0.12 0.01 280);
+  --secondary: oklch(0.8 0.24 280);
+  --secondary-foreground: oklch(0.12 0.01 280);
+  --muted: oklch(0.32 0.03 280);
+  --muted-foreground: oklch(0.75 0.02 280);
+  --accent: oklch(0.75 0.27 350);
+  --accent-foreground: oklch(0.12 0.01 280);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.96 0.01 280);
+  --border: oklch(0.28 0.02 280);
+  --input: oklch(0.22 0.02 280);
+  --ring: oklch(0.75 0.28 45);
+  --chart-1: oklch(0.75 0.28 45);
+  --chart-2: oklch(0.8 0.24 280);
+  --chart-3: oklch(0.75 0.27 350);
+  --chart-4: oklch(0.7 0.25 200);
+  --chart-5: oklch(0.75 0.22 100);
+  --sidebar: oklch(0.18 0.02 280);
+  --sidebar-foreground: oklch(0.96 0.01 280);
+  --sidebar-primary: oklch(0.75 0.28 45);
+  --sidebar-primary-foreground: oklch(0.12 0.01 280);
+  --sidebar-accent: oklch(0.8 0.24 280);
+  --sidebar-accent-foreground: oklch(0.12 0.01 280);
+  --sidebar-border: oklch(0.28 0.02 280);
+  --sidebar-ring: oklch(0.75 0.28 45);
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* CHANGE: Premium animations library with multiple event sequences */
+@keyframes typing {
+  from {
+    width: 0;
+    opacity: 1;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes belated-shimmer {
+  0%,
+  100% {
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(251, 146, 60, 0.8), 0 0 60px rgba(220, 38, 38, 0.6);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px #fbbf24) drop-shadow(0 0 4px #f59e0b);
+  }
+  20%,
+  24%,
+  55% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 3px #f97316);
+  }
+}
+
+@keyframes bounce-hearts {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-25px);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes knife-slice {
+  0% {
+    transform: translateX(-100px) translateY(-50px) rotate(-45deg) scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(0) translateY(0) rotate(-45deg) scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100px) translateY(50px) rotate(-45deg) scaleX(0.8);
+    opacity: 0.6;
+  }
+}
+
+@keyframes cake-split {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  50% {
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(45% 0, 55% 0, 55% 100%, 45% 100%);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(var(--tx)) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(251, 146, 60, 0.8);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes rotate-360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* CHANGE: Added new animations for cake cutting ceremony */
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(50px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes plate-spin {
+  0% {
+    transform: rotateY(90deg) scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-typing {
+  animation: typing 3s steps(30, end) infinite;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.animate-belated-shimmer {
+  animation: belated-shimmer 2s ease-in-out infinite;
+}
+
+.animate-flicker {
+  animation: flicker 0.15s infinite;
+}
+
+.animate-bounce-hearts {
+  animation: bounce-hearts 1.5s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float calc(var(--duration, 8s)) linear var(--delay, 0s) infinite;
+}
+
+.animate-float-up {
+  animation: float-up calc(var(--duration, 6s)) ease-in var(--delay, 0s) infinite;
+}
+
+.animate-pop-in {
+  animation: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-knife-slice {
+  animation: knife-slice 2.5s ease-in-out forwards;
+}
+
+.animate-cake-split {
+  animation: cake-split 1.5s ease-in-out forwards;
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall var(--duration, 3s) ease-in forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-from-left 0.8s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-from-right 0.8s ease-out;
+}
+
+.animate-scale-bounce {
+  animation: scale-bounce 0.8s ease-in-out;
+}
+
+.animate-rotate-360 {
+  animation: rotate-360 3s linear infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-slide-down {
+  animation: slide-down 0.6s ease-out;
+}
+
+.animate-plate-spin {
+  animation: plate-spin 0.8s ease-out;
+}
+
+/* Added: Table, cake drop, knife arc and ambience effects for ceremony */
+@keyframes table-slide-in {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes cake-drop-bounce {
+  0% {
+    transform: translateY(-200px) scale(0.98);
+    filter: drop-shadow(0 30px 50px rgba(0,0,0,0.25));
+  }
+  70% {
+    transform: translateY(0px) scale(1.02);
+  }
+  85% {
+    transform: translateY(-18px) scale(1);
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+}
+
+@keyframes knife-arc {
+  0% {
+    transform: translate(160px, -120px) rotate(-25deg);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(60px, -40px) rotate(-35deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(0px, 0px) rotate(-45deg);
+  }
+  80% {
+    transform: translate(-40px, 40px) rotate(-55deg);
+  }
+  100% {
+    transform: translate(-140px, 120px) rotate(-65deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes spotlight-pulse {
+  0% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0.15;
+  }
+}
+
+.animate-table-slide-in {
+  animation: table-slide-in 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-cake-drop-bounce {
+  animation: cake-drop-bounce 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-knife-arc {
+  animation: knife-arc 1200ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-spotlight-pulse {
+  animation: spotlight-pulse 2.2s ease-in-out infinite;
+}
+
+/* Music bars for birthday song */
+@keyframes music-bar {
+  0% { transform: scaleY(0.2); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.2); }
+}
+
+.animate-music-bar-1 { animation: music-bar 700ms ease-in-out infinite; }
+.animate-music-bar-2 { animation: music-bar 650ms ease-in-out infinite; }
+.animate-music-bar-3 { animation: music-bar 600ms ease-in-out infinite; }
+.animate-music-bar-4 { animation: music-bar 750ms ease-in-out infinite; }
+.animate-music-bar-5 { animation: music-bar 680ms ease-in-out infinite; }
+
+/* Camera flash effect */
+@keyframes camera-flash {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  30% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.animate-camera-flash { animation: camera-flash 900ms ease-out; }
+
+/* Finale balloon rise */
+@keyframes balloon-rise {
+  0% { transform: translateY(120%); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(-120%); opacity: 1; }
+}
+
+.animate-balloon-rise { animation: balloon-rise 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* Subtle horizontal sway while rising */
+@keyframes balloon-sway {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(6px); }
+  50% { transform: translateX(0); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+.animate-balloon-sway { animation: balloon-sway 2.6s ease-in-out infinite; }
