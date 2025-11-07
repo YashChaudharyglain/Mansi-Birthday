@@ -12,17 +12,28 @@ export default function SelfieCapture({ open, onClose, onCapture }: SelfieCaptur
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [error, setError] = useState<string | null>(null)
+  const [ready, setReady] = useState(false)
+  const [clicking, setClicking] = useState(false)
 
   useEffect(() => {
     let stream: MediaStream | null = null
     const start = async () => {
       if (!open) return
       setError(null)
+      setReady(false)
+      setClicking(false)
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "user" }, width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false,
+        })
         if (videoRef.current) {
           videoRef.current.srcObject = stream
-          await videoRef.current.play()
+          const onCanPlay = () => {
+            setReady(true)
+          }
+          videoRef.current.addEventListener("canplay", onCanPlay, { once: true })
+          await videoRef.current.play().catch(() => {})
         }
       } catch (e) {
         setError("Camera access denied or unavailable.")
@@ -31,15 +42,20 @@ export default function SelfieCapture({ open, onClose, onCapture }: SelfieCaptur
     start()
     return () => {
       if (stream) stream.getTracks().forEach((t) => t.stop())
+      setReady(false)
+      setClicking(false)
     }
   }, [open])
 
   const handleCapture = () => {
+    if (clicking) return
     const video = videoRef.current
     const canvas = canvasRef.current
     if (!video || !canvas) return
-    const w = video.videoWidth
-    const h = video.videoHeight
+    const w = video.videoWidth || video.clientWidth
+    const h = video.videoHeight || video.clientHeight
+    if (!ready || !w || !h) return
+    setClicking(true)
     canvas.width = w
     canvas.height = h
     const ctx = canvas.getContext("2d")
@@ -47,6 +63,7 @@ export default function SelfieCapture({ open, onClose, onCapture }: SelfieCaptur
     ctx.drawImage(video, 0, 0, w, h)
     const dataUrl = canvas.toDataURL("image/png")
     onCapture(dataUrl)
+    // keep disabled to prevent multiple captures in one open
   }
 
   if (!open) return null
@@ -64,7 +81,17 @@ export default function SelfieCapture({ open, onClose, onCapture }: SelfieCaptur
             <p className="text-red-600 text-sm">{error}</p>
           ) : (
             <div className="rounded-xl overflow-hidden border border-amber-200 bg-black">
-              <video ref={videoRef} className="w-full h-64 object-cover" playsInline muted />
+              <video
+                ref={videoRef}
+                className="w-full h-64 object-cover select-none"
+                playsInline
+                autoPlay
+                muted
+                controls={false}
+                disablePictureInPicture
+                controlsList="nofullscreen noremoteplayback noplaybackrate nodownload"
+                onContextMenu={(e) => e.preventDefault()}
+              />
             </div>
           )}
           <canvas ref={canvasRef} className="hidden" />
@@ -74,9 +101,14 @@ export default function SelfieCapture({ open, onClose, onCapture }: SelfieCaptur
             </button>
             <button
               onClick={handleCapture}
-              className="px-5 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition"
+              disabled={!ready || clicking}
+              className={`px-5 py-2 rounded-full text-white font-semibold shadow-md transform transition ${
+                !ready || clicking
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-gradient-to-r from-amber-500 to-orange-600 hover:shadow-lg hover:scale-105"
+              }`}
             >
-              Click Photo
+              {!ready ? "Warming up camera..." : clicking ? "Capturing..." : "Click Photo"}
             </button>
           </div>
         </div>

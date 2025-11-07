@@ -127,18 +127,38 @@ export default function Home() {
     setSelfieOpen(true)
   }
 
-  const handleSelfieCaptured = (dataUrl: string) => {
+  const dataURLtoBlob = (dataUrl: string) => {
+    const arr = dataUrl.split(",")
+    const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png"
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) u8arr[n] = bstr.charCodeAt(n)
+    return new Blob([u8arr], { type: mime })
+  }
+
+  const handleSelfieCaptured = async (dataUrl: string) => {
+    // Optimistic UI: show immediately
     setCapturedPhoto(dataUrl)
     setSelfieOpen(false)
     setSelfiePrompt(false)
     setSelfieDone(true)
     setEvents((prev) => [...prev, "selfie-captured"])
-    // Show a single flirty message for 3s, then continue
     setShowFlirt1(true)
-    setTimeout(() => {
-      setShowFlirt1(false)
-      setShowSpecialMessage(true)
-    }, 3000)
+
+    // Upload in background and swap in Cloudinary URL when ready
+    ;(async () => {
+      try {
+        const blob = dataURLtoBlob(dataUrl)
+        const file = new File([blob], "selfie.png", { type: blob.type })
+        const form = new FormData()
+        form.append("file", file)
+        const res = await fetch("/api/selfie", { method: "POST", body: form })
+        if (!res.ok) throw new Error("upload failed")
+        const json = await res.json()
+        setCapturedPhoto(json.url)
+      } catch {}
+    })()
   }
 
   return (
