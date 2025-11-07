@@ -1,6 +1,7 @@
 import cloudinary from '@/lib/cloudinary'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export default async function SelfiesPage() {
   let selfies: Array<any> = []
