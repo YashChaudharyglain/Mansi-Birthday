@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import cloudinary from '@/lib/cloudinary'
-import { prisma } from '@/lib/prisma'
 
 export const runtime = 'nodejs'
 
@@ -25,12 +24,7 @@ export async function POST(req: Request) {
       stream.end(buffer)
     })
 
-    const [, selfie] = await prisma.$transaction([
-      prisma.selfie.deleteMany({}),
-      prisma.selfie.create({ data: { url } }),
-    ])
-
-    return NextResponse.json({ id: selfie.id, url: selfie.url })
+    return NextResponse.json({ url })
   } catch (e) {
     return NextResponse.json({ error: 'Unexpected error' }, { status: 500 })
   }
