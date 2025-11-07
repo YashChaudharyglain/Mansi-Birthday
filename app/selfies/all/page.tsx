@@ -32,9 +32,16 @@ export async function deleteManyAction(payload: { publicIds: string[]; password:
 
 export default async function AllSelfiesPage({ searchParams }: { searchParams: Promise<{ cursor?: string }> }) {
   const { cursor } = await searchParams
-  const res = await fetchPage({ cursor })
-  const resources = (res?.resources || []) as Array<any>
-  const nextCursor: string | undefined = res?.next_cursor
+  let resources: Array<any> = []
+  let nextCursor: string | undefined = undefined
+  try {
+    const res = await fetchPage({ cursor })
+    resources = (res?.resources || []) as Array<any>
+    nextCursor = res?.next_cursor
+  } catch (e) {
+    resources = []
+    nextCursor = undefined
+  }
 
   // Deduplicate strictly by public_id using a Map
   const uniqueMap = new Map<string, any>()
@@ -52,7 +59,7 @@ export default async function AllSelfiesPage({ searchParams }: { searchParams: P
           <Link href="/selfies" className="text-amber-700 hover:underline">Latest (DB)</Link>
         </div>
         {unique.length === 0 ? (
-          <p className="text-amber-700">No selfies found in Cloudinary folder <code className="px-1 rounded bg-amber-100">selfies</code>.</p>
+          <p className="text-amber-700">No selfies found or unable to load. Ensure Cloudinary env vars are set on the server.</p>
         ) : (
           <SelfiesGrid
             items={unique.map((r) => {

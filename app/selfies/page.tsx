@@ -3,17 +3,22 @@ import cloudinary from '@/lib/cloudinary'
 export const dynamic = 'force-dynamic'
 
 export default async function SelfiesPage() {
-  const res: any = await cloudinary.search
-    .expression('folder=selfies AND resource_type:image AND type:upload')
-    .sort_by('created_at','desc')
-    .max_results(1)
-    .execute()
-  const selfies = (res?.resources || []) as Array<any>
+  let selfies: Array<any> = []
+  try {
+    const res: any = await cloudinary.search
+      .expression('folder=selfies AND resource_type:image AND type:upload')
+      .sort_by('created_at','desc')
+      .max_results(1)
+      .execute()
+    selfies = (res?.resources || []) as Array<any>
+  } catch (e) {
+    selfies = []
+  }
   return (
     <div className="min-h-screen px-6 py-10 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50">
       <h1 className="text-2xl font-bold text-amber-800 mb-6">Saved Selfies</h1>
       {selfies.length === 0 ? (
-        <p className="text-amber-700">No selfies yet. Capture one in the experience and it will appear here.</p>
+        <p className="text-amber-700">No selfies yet or unable to load. Ensure Cloudinary env vars are set on the server.</p>
       ) : (
         <div className="max-w-4xl mx-auto">
           {selfies.map((s: any) => {
